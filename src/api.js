@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "https://arlette-sepaloid-joey.ngrok-free.dev",
+    // Добавь /api/ и закрывающий слеш /
+    baseURL: import.meta.env.VITE_API_URL || "https://arlette-sepaloid-joey.ngrok-free.dev/api/", 
 });
 
 // Перехватчик: перед каждым запросом проверяем наличие токена
