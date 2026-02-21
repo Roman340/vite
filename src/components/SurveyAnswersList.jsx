@@ -38,7 +38,7 @@ const SurveyAnswersList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {submissions.map((sub) => (
+                    {submissions?.map((sub) => (
                         <tr key={sub.username} style={{ borderBottom: '1px solid #444' }}>
                             <td style={{ padding: '12px' }}>{sub.username}</td>
                             <td style={{ padding: '12px' }}>{new Date(sub.date).toLocaleString()}</td>

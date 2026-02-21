@@ -15,17 +15,21 @@ const Results = () => {
         <div style={{ color: 'white', padding: '20px' }}>
             <h2>📊 Доступные опросы (Админ-панель)</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
-                {surveys.map((item) => ( // Мы называем переменную 'item'
-                    <div key={item.id} style={cardStyle}>
-                        <h3>{item.title}</h3>
-                        <p>Вопросов в базе: {item.questions?.length || 0}</p>
-                        
-                        {/* ИСПРАВЛЕНИЕ ТУТ: используем item.id и убираем лишний /survey/ */}
-                        <Link to={`/results/${item.id}`} style={linkStyle}>
-                            Посмотреть список ответов →
-                        </Link>
-                    </div>
-                ))}
+                {surveys?.length > 0 ? (
+                    surveys.map((item) => (
+                        <div key={item.id} style={cardStyle}>
+                            <h3>{item.title}</h3>
+                            <p>Вопросов в базе: {item.questions?.length || 0}</p>
+                            
+                            {/* ИСПРАВЛЕНИЕ ТУТ: используем item.id и убираем лишний /survey/ */}
+                            <Link to={`/results/${item.id}`} style={linkStyle}>
+                                Посмотреть список ответов →
+                            </Link>
+                        </div>
+                    ))
+                ) : (
+                    !loading && <p>Опросов не найдено</p>
+                )}
             </div>
         </div>
     );

@@ -38,7 +38,7 @@ const AnswerDetail = () => {
             <p style={{ color: '#888', marginBottom: '30px' }}>Опрос №{surveyId}</p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {data.map((item, index) => (
+                {data?.map((item, index) => (
                     <div key={item.id} style={cardStyle}>
                         <p style={labelStyle}>Вопрос {index + 1}:</p>
                         <p style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '15px' }}>
