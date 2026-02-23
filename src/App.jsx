@@ -53,6 +53,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/survey/:uid" element={<SurveyForm />} />
+                <Route path="/create" element={<ProtectedRoute><CreateSurvey /></ProtectedRoute>} />
 
                 {/* Защищенные роуты */}
                 <Route path="/results" element={<ProtectedRoute><Results /></ProtectedRoute>} />
