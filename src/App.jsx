@@ -6,7 +6,7 @@ import SurveyAnswersList from './components/SurveyAnswersList';
 import AnswerDetail from './components/AnswerDetail';
 import Login from './components/Login';
 import Register from "./components/Register"; 
-import ProtectedRoute from "./components/ProtectedRoute"; // Оставляем один импорт
+import { ProtectedRoute } from "./components/ProtectedRoute"; 
 
 function App() {
   const handleLogout = () => {
@@ -14,6 +14,7 @@ function App() {
     window.location.href = '/login';
   };
 
+  // Проверяем наличие токена для отрисовки кнопок
   const isAuthenticated = !!localStorage.getItem('access');
 
   return (
@@ -21,21 +22,26 @@ function App() {
         <div id='ro'>
           {/* Навигационная панель */}
           <nav style={navStyle}>
-            <div style={{ display: 'flex', gap: '20px' }}>
-              {/* Заменил 1 на пример UID, либо оставь просто ссылку на список */}
-              <Link to="/results" style={navLinkStyle}>📊 Список опросов</Link>
+            <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+              <Link to="/results" style={navLinkStyle}>📊 Админ-панель</Link>
+              
+              {/* Кнопка регистрации видна только гостям */}
               {!isAuthenticated && (
-                <Link to="/register" style={navLinkStyle}>📝 Регистрация</Link>
+                <Link to="/register" style={registerButtonStyle}>📝 Регистрация</Link>
               )}
             </div>
             
             <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                {/* Если НЕ вошел — показываем Вход, если вошел — Выход */}
                 {!isAuthenticated ? (
                     <Link to="/login" style={navLinkStyle}>Войти</Link>
                 ) : (
-                    <button onClick={handleLogout} style={logoutButtonStyle}>
-                        Выйти
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                        <span style={{ color: '#888', fontSize: '0.9rem' }}>Авторизован</span>
+                        <button onClick={handleLogout} style={logoutButtonStyle}>
+                            Выйти
+                        </button>
+                    </div>
                 )}
             </div>
           </nav>
@@ -44,40 +50,15 @@ function App() {
           <div className='main'>
             <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
               <Routes>
-                {/* ПУБЛИЧНЫЕ РОУТЫ */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/survey/:uid" element={<SurveyForm />} />
 
-                {/* ЗАЩИЩЕННЫЕ РОУТЫ (Админка) */}
-                <Route 
-                  path="/results" 
-                  element={
-                    <ProtectedRoute>
-                      <Results />
-                    </ProtectedRoute>
-                  } 
-                />
+                {/* Защищенные роуты */}
+                <Route path="/results" element={<ProtectedRoute><Results /></ProtectedRoute>} />
+                <Route path="/results/:surveyId" element={<ProtectedRoute><SurveyAnswersList /></ProtectedRoute>} />
+                <Route path="/results/session/:sessionId" element={<ProtectedRoute><AnswerDetail /></ProtectedRoute>} />
 
-                <Route 
-                  path="/results/:surveyId" 
-                  element={
-                    <ProtectedRoute>
-                      <SurveyAnswersList />
-                    </ProtectedRoute>
-                  } 
-                />
-
-                <Route 
-                  path="/results/session/:sessionId" 
-                  element={
-                    <ProtectedRoute>
-                      <AnswerDetail />
-                    </ProtectedRoute>
-                  } 
-                />
-
-                {/* Редирект с главной на результаты или логин */}
                 <Route path="/" element={<Navigate to="/results" />} />
               </Routes>
             </div>
@@ -87,7 +68,7 @@ function App() {
   );
 }
 
-
+// --- Стили (добавь/обнови эти константы внизу App.jsx) ---
 
 const navStyle = {
     padding: '15px 40px',
@@ -105,6 +86,16 @@ const navLinkStyle = {
     textDecoration: 'none',
     fontWeight: '600',
     fontSize: '1.1rem'
+};
+
+const registerButtonStyle = {
+    background: '#333',
+    color: 'white',
+    textDecoration: 'none',
+    padding: '8px 15px',
+    borderRadius: '6px',
+    fontSize: '0.9rem',
+    border: '1px solid #444'
 };
 
 const logoutButtonStyle = {
