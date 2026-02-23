@@ -3,100 +3,76 @@ import api from '../api';
 import { useNavigate } from 'react-router-dom';
 
 const CreateSurvey = () => {
-    const [title, setTitle] = useState('');
-    const [questions, setQuestions] = useState([]);
-    const navigate = useNavigate();
+  const [title, setTitle] = useState('');
+  const [questions, setQuestions] = useState([]);
+  const navigate = useNavigate();
 
-    const addQuestion = (type) => {
-        setQuestions([...questions, { 
-            text: '', 
-            question_type: type, 
-            choices: type === 'text' ? [] : [{ text: '' }] 
-        }]);
-    };
+  const addQuestion = (type) => {
+    setQuestions([...questions, { text: '', question_type: type, choices: [''] }]);
+  };
 
-    const updateQuestionText = (index, val) => {
-        const newQs = [...questions];
-        newQs[index].text = val;
-        setQuestions(newQs);
-    };
+  const handleSave = async () => {
+    try {
+      await api.post('surveys/', { title, questions });
+      alert("Опрос создан!");
+      navigate('/my-surveys');
+    } catch (err) { alert("Ошибка при создании"); }
+  };
 
-    const addChoice = (qIndex) => {
-        const newQs = [...questions];
-        newQs[qIndex].choices.push({ text: '' });
-        setQuestions(newQs);
-    };
+  return (
+    <div style={{ color: 'white', maxWidth: '600px', margin: '0 auto' }}>
+      <h2>📝 Создание нового опроса</h2>
+      <input 
+        placeholder="Название опроса" 
+        style={inputStyle} 
+        onChange={e => setTitle(e.target.value)} 
+      />
+      
+      <div style={{ margin: '20px 0', display: 'flex', gap: '10px' }}>
+        <button onClick={() => addQuestion('text')}>+ Текст</button>
+        <button onClick={() => addQuestion('radio')}>+ Один выбор</button>
+        <button onClick={() => addQuestion('checkbox')}>+ Много выбора</button>
+      </div>
 
-    const updateChoiceText = (qIndex, cIndex, val) => {
-        const newQs = [...questions];
-        newQs[qIndex].choices[cIndex].text = val;
-        setQuestions(newQs);
-    };
-
-    const handleSave = async () => {
-        if (!title) return alert("Введите название опроса");
-        try {
-            await api.post('surveys/', { title, questions });
-            alert("Опрос успешно создан!");
-            navigate('/results');
-        } catch (err) {
-            alert("Ошибка при сохранении");
-        }
-    };
-
-    return (
-        <div style={{ color: 'white', maxWidth: '800px', margin: '0 auto' }}>
-            <h1>🛠 Конструктор опроса</h1>
+      {questions.map((q, qIdx) => (
+        <div key={qIdx} style={cardStyle}>
+          <input 
+            placeholder="Текст вопроса" 
+            style={inputStyle}
+            onChange={e => {
+              const newQs = [...questions];
+              newQs[qIdx].text = e.target.value;
+              setQuestions(newQs);
+            }} 
+          />
+          {q.question_type !== 'text' && q.choices.map((c, cIdx) => (
             <input 
-                style={inputStyle} 
-                placeholder="Название опроса" 
-                onChange={e => setTitle(e.target.value)} 
+              key={cIdx}
+              placeholder={`Вариант ${cIdx + 1}`}
+              style={{...inputStyle, width: '80%', display: 'block'}}
+              onChange={e => {
+                const newQs = [...questions];
+                newQs[qIdx].choices[cIdx] = e.target.value;
+                setQuestions(newQs);
+              }}
             />
-
-            <div style={{ margin: '20px 0', display: 'flex', gap: '10px' }}>
-                <button onClick={() => addQuestion('text')} style={btnStyle}>+ Текст</button>
-                <button onClick={() => addQuestion('radio')} style={btnStyle}>+ Один выбор</button>
-                <button onClick={() => addQuestion('checkbox')} style={btnStyle}>+ Много выбора</button>
-            </div>
-
-            {questions.map((q, qIdx) => (
-                <div key={qIdx} style={cardStyle}>
-                    <h3>Вопрос №{qIdx + 1} ({q.question_type})</h3>
-                    <input 
-                        style={inputStyle} 
-                        placeholder="Текст вопроса" 
-                        value={q.text}
-                        onChange={e => updateQuestionText(qIdx, e.target.value)}
-                    />
-
-                    {q.question_type !== 'text' && (
-                        <div style={{ marginTop: '10px' }}>
-                            {q.choices.map((c, cIdx) => (
-                                <input 
-                                    key={cIdx} 
-                                    style={{ ...inputStyle, width: '80%', display: 'inline-block' }}
-                                    placeholder={`Вариант ${cIdx + 1}`}
-                                    value={c.text}
-                                    onChange={e => updateChoiceText(qIdx, cIdx, e.target.value)}
-                                />
-                            ))}
-                            <button onClick={() => addChoice(qIdx)} style={{ marginLeft: '10px' }}>+</button>
-                        </div>
-                    )}
-                </div>
-            ))}
-
-            {questions.length > 0 && (
-                <button onClick={handleSave} style={saveBtnStyle}>Опубликовать опрос</button>
-            )}
+          ))}
+          {q.question_type !== 'text' && (
+            <button onClick={() => {
+              const newQs = [...questions];
+              newQs[qIdx].choices.push('');
+              setQuestions(newQs);
+            }}>+ Вариант</button>
+          )}
         </div>
-    );
+      ))}
+      <button onClick={handleSave} style={saveBtnStyle}>Опубликовать</button>
+    </div>
+  );
 };
 
-// Стили
-const inputStyle = { width: '100%', padding: '10px', background: '#1a1a1a', border: '1px solid #444', color: 'white', borderRadius: '5px', marginBottom: '10px' };
-const cardStyle = { background: '#242424', padding: '20px', borderRadius: '10px', marginBottom: '20px', border: '1px solid #333' };
-const btnStyle = { padding: '10px 20px', cursor: 'pointer', background: '#333', color: 'white', border: '1px solid #555' };
-const saveBtnStyle = { ...btnStyle, background: '#646cff', width: '100%', fontSize: '1.2rem' };
+const inputStyle = { width: '100%', padding: '10px', marginBottom: '10px', background: '#1a1a1a', color: 'white', border: '1px solid #333' };
+const cardStyle = { background: '#242424', padding: '15px', borderRadius: '8px', marginBottom: '15px' };
+const saveBtnStyle = { width: '100%', padding: '15px', background: '#646cff', color: 'white', fontWeight: 'bold' };
 
 export default CreateSurvey;

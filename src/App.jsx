@@ -8,6 +8,7 @@ import Login from './components/Login';
 import Register from "./components/Register"; 
 import { ProtectedRoute } from "./components/ProtectedRoute"; 
 import CreateSurvey from './components/CreateSurvey';
+import MySurveys from './components/MySurveys';
 
 function App() {
   const handleLogout = () => {
@@ -55,6 +56,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/survey/:uid" element={<SurveyForm />} />
                 <Route path="/create" element={<ProtectedRoute><CreateSurvey /></ProtectedRoute>} />
+                <Route path="/my-surveys" element={<ProtectedRoute><MySurveys /></ProtectedRoute>} />
 
                 {/* Защищенные роуты */}
                 <Route path="/results" element={<ProtectedRoute><Results /></ProtectedRoute>} />
