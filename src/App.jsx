@@ -7,6 +7,7 @@ import AnswerDetail from './components/AnswerDetail';
 import Login from './components/Login';
 import Register from "./components/Register"; 
 import { ProtectedRoute } from "./components/ProtectedRoute"; 
+import CreateSurvey from './components/CreateSurvey';
 
 function App() {
   const handleLogout = () => {
