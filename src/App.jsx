@@ -5,7 +5,8 @@ import Results from './components/Results';
 import SurveyAnswersList from './components/SurveyAnswersList';
 import AnswerDetail from './components/AnswerDetail';
 import Login from './components/Login';
-import ProtectedRoute from './components/ProtectedRoute';
+import Register from "./components/Register"; 
+import ProtectedRoute from "./components/ProtectedRoute"; // Оставляем один импорт
 
 function App() {
   const handleLogout = () => {
@@ -16,67 +17,73 @@ function App() {
   const isAuthenticated = !!localStorage.getItem('access');
 
   return (
-    
     <Router>
         <div id='ro'>
           {/* Навигационная панель */}
           <nav style={navStyle}>
             <div style={{ display: 'flex', gap: '20px' }}>
-              <Link to="/survey/1" style={navLinkStyle}>🔥 Пройти опрос</Link>
-              <Link to="/results" style={navLinkStyle}>📊 Админ-панель</Link>
+              {/* Заменил 1 на пример UID, либо оставь просто ссылку на список */}
+              <Link to="/results" style={navLinkStyle}>📊 Список опросов</Link>
+              {!isAuthenticated && (
+                <Link to="/register" style={navLinkStyle}>📝 Регистрация</Link>
+              )}
             </div>
             
-            {isAuthenticated && (
-              <button onClick={handleLogout} style={logoutButtonStyle}>
-                Выйти
-              </button>
-            )}
+            <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                {!isAuthenticated ? (
+                    <Link to="/login" style={navLinkStyle}>Войти</Link>
+                ) : (
+                    <button onClick={handleLogout} style={logoutButtonStyle}>
+                        Выйти
+                    </button>
+                )}
+            </div>
           </nav>
 
           {/* Контент страниц */}
           <div className='main'>
-          <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
-            <Routes>
-              <Route path="/survey/:id" element={<SurveyForm />} />
-              <Route path="/login" element={<Login />} />
+            <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
+              <Routes>
+                {/* ПУБЛИЧНЫЕ РОУТЫ */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/survey/:uid" element={<SurveyForm />} />
 
-              {/* УРОВЕНЬ 1: Список всех опросов */}
-              <Route 
-                path="/results" 
-                element={
-                  <ProtectedRoute>
-                    <Results />
-                  </ProtectedRoute>
-                } 
-              />
+                {/* ЗАЩИЩЕННЫЕ РОУТЫ (Админка) */}
+                <Route 
+                  path="/results" 
+                  element={
+                    <ProtectedRoute>
+                      <Results />
+                    </ProtectedRoute>
+                  } 
+                />
 
-              {/* УРОВЕНЬ 2: Список сессий (участников) конкретного опроса */}
-              <Route 
-                path="/results/:surveyId" 
-                element={
-                  <ProtectedRoute>
-                    <SurveyAnswersList />
-                  </ProtectedRoute>
-                } 
-              />
+                <Route 
+                  path="/results/:surveyId" 
+                  element={
+                    <ProtectedRoute>
+                      <SurveyAnswersList />
+                    </ProtectedRoute>
+                  } 
+                />
 
-              {/* УРОВЕНЬ 3: Полный отчет Вопрос-Ответ по конкретной сессии */}
-              <Route 
-                path="/results/session/:sessionId" 
-                element={
-                  <ProtectedRoute>
-                    <AnswerDetail />
-                  </ProtectedRoute>
-                } 
-              />
+                <Route 
+                  path="/results/session/:sessionId" 
+                  element={
+                    <ProtectedRoute>
+                      <AnswerDetail />
+                    </ProtectedRoute>
+                  } 
+                />
 
-              <Route path="/" element={<Navigate to="/survey/1" />} />
-            </Routes>
-          </div>
+                {/* Редирект с главной на результаты или логин */}
+                <Route path="/" element={<Navigate to="/results" />} />
+              </Routes>
+            </div>
           </div>
         </div>
     </Router>
-    
   );
 }
 

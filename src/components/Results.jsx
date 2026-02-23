@@ -21,7 +21,7 @@ const Results = () => {
                         <p>Вопросов в базе: {item.questions?.length || 0}</p>
                         
                         {/* ИСПРАВЛЕНИЕ ТУТ: используем item.id и убираем лишний /survey/ */}
-                        <Link to={`/results/${item.id}`} style={linkStyle}>
+                        <Link to={`/results/${item.uid}`} style={linkStyle}>
                             Посмотреть список ответов →
                         </Link>
                     </div>

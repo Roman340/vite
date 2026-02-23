@@ -1,9 +1,10 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ children }) => {
-    const token = localStorage.getItem('access');
-    // Если токена нет — отправляем на логин
-    return token ? children : <Navigate to="/login" />;
+export const ProtectedRoute = ({ children }) => {
+    const token = localStorage.getItem("access");
+    if (!token) {
+        // Если токена нет, отправляем на логин
+        return <Navigate to="/login" />;
+    }
+    return children;
 };
-
-export default ProtectedRoute;

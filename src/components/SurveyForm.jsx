@@ -3,13 +3,13 @@ import { useParams } from 'react-router-dom';
 import api from '../api';
 
 const SurveyForm = () => {
-  const { id } = useParams();
+  const { uid } = useParams();
   const [survey, setSurvey] = useState(null);
   const [answers, setAnswers] = useState({});
 
   useEffect(() => {
-    api.get(`surveys/${id}/`).then(res => setSurvey(res.data));
-  }, [id]);
+    api.get(`surveys/${uid}/`).then(res => setSurvey(res.data));
+  }, [uid]);
 
   const handleSubmit = (e) => {
   e.preventDefault();
