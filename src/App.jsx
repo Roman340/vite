@@ -27,19 +27,24 @@ function App() {
             <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
               <Link to="/results" style={navLinkStyle}>📊 Админ-панель</Link>
               
-              {/* Кнопка регистрации видна только гостям */}
+              {/* Эти кнопки появятся только после входа в систему */}
+              {isAuthenticated && (
+                <>
+                  <Link to="/create" style={navLinkStyle}>➕ Создать опрос</Link>
+                  <Link to="/my-surveys" style={navLinkStyle}>📂 Мои опросы</Link>
+                </>
+              )}
+
               {!isAuthenticated && (
                 <Link to="/register" style={registerButtonStyle}>📝 Регистрация</Link>
               )}
             </div>
             
             <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                {/* Если НЕ вошел — показываем Вход, если вошел — Выход */}
                 {!isAuthenticated ? (
                     <Link to="/login" style={navLinkStyle}>Войти</Link>
                 ) : (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                        <span style={{ color: '#888', fontSize: '0.9rem' }}>Авторизован</span>
                         <button onClick={handleLogout} style={logoutButtonStyle}>
                             Выйти
                         </button>
@@ -55,10 +60,12 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/survey/:uid" element={<SurveyForm />} />
+
+                {/* Новые маршруты */}
                 <Route path="/create" element={<ProtectedRoute><CreateSurvey /></ProtectedRoute>} />
                 <Route path="/my-surveys" element={<ProtectedRoute><MySurveys /></ProtectedRoute>} />
 
-                {/* Защищенные роуты */}
+                {/* Старые маршруты */}
                 <Route path="/results" element={<ProtectedRoute><Results /></ProtectedRoute>} />
                 <Route path="/results/:surveyId" element={<ProtectedRoute><SurveyAnswersList /></ProtectedRoute>} />
                 <Route path="/results/session/:sessionId" element={<ProtectedRoute><AnswerDetail /></ProtectedRoute>} />
